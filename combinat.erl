@@ -74,7 +74,7 @@ combs_clb([RemainH|RemainT], Result, Number, Callback) ->
     combs_clb(RemainT, [RemainH|Result], Number, Callback).
 
 
-%%Function = permuts_clb | combs_clb
+%% Function = permuts_clb | combs_clb
 proc(Function, List, Number) ->
     process_flag(trap_exit, true),    
     Supervisor = self(),
@@ -84,10 +84,10 @@ proc(Function, List, Number) ->
 loop(Total) ->
     receive
 	{'EXIT', Worker, normal} ->
-	    io:format("~w~n", [Total]),
-	    unlink(Worker);
+	    unlink(Worker),
+	    Total;
 	Result ->
-	    loop(Total ++ [Result])
+	    loop([Result|Total])
     end.
 
 
@@ -95,7 +95,7 @@ permuts_comp(List, Number) -> permuts_comp(List, [], Number).
 permuts_comp(_Remain, Result, Number) when length(Result) == Number -> 
     io:format("~w~n", [Result]);
 permuts_comp(Remain, Result, Number) -> 
-    [permuts_comp(Remain -- [R], [R] ++ Result, Number) || R <- Remain].
+    [permuts_comp(Remain -- [R], [R|Result], Number) || R <- Remain].
 
 combs_comp(List, Number) -> 
     ListIndexed = lists:zip(List, lists:seq(1, length(List))),
@@ -106,4 +106,4 @@ combs_comp(_Remain, Result, Number) when length(Result) == Number ->
 combs_comp(Remain, [], Number) ->
     [combs_comp(Remain -- [R], [R], Number) || R <- Remain];
 combs_comp(Remain, [{HValue,HIndex}|T], Number) ->
-    [combs_comp(Remain -- [{R,I}], [{R,I}] ++ [{HValue,HIndex}|T], Number) || {R,I} <- Remain, I > HIndex].
+    [combs_comp(Remain -- [{R,I}], [{R,I}|[{HValue,HIndex}|T]], Number) || {R,I} <- Remain, I > HIndex].
