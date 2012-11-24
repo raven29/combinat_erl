@@ -19,25 +19,25 @@ combs_out([RemainH|RemainT], Result, Number) ->
     combs_out(RemainT, [RemainH|Result], Number).
 
 
-permuts_out_2(List, Number) -> permuts_out_iteration(List, [], Number, List).
-permuts_out_iteration([], _Result, _Number, _List) -> ok;
-permuts_out_iteration([RemainH|RemainT], Result, Number, List) -> 
-    permuts_out_iteration(RemainT, Result, Number, List),
-    permuts_out_recursion(List -- [RemainH|Result], [RemainH|Result], Number, List).
-permuts_out_recursion(_Remain, Result, Number, _List) when length(Result) == Number -> 
+permuts_out_2(List, Number) -> permuts_out_hor(List, [], Number, List).
+permuts_out_hor([], _Result, _Number, _List) -> ok;
+permuts_out_hor([RemainH|RemainT], Result, Number, List) -> 
+    permuts_out_hor(RemainT, Result, Number, List),
+    permuts_out_ver(List -- [RemainH|Result], [RemainH|Result], Number, List).
+permuts_out_ver(_Remain, Result, Number, _List) when length(Result) == Number -> 
     io:format("~w~n", [Result]);
-permuts_out_recursion(Remain, Result, Number, List) ->
-    permuts_out_iteration(Remain, Result, Number, List).
+permuts_out_ver(Remain, Result, Number, List) ->
+    permuts_out_hor(Remain, Result, Number, List).
 
-combs_out_2(List, Number) -> combs_out_iteration(List, [], Number, List).
-combs_out_iteration([], _Result, _Number, _List) -> ok;
-combs_out_iteration([RemainH|RemainT], Result, Number, List) -> 
-    combs_out_iteration(RemainT, Result, Number, List),
-    combs_out_recursion(RemainT, [RemainH|Result], Number, List).
-combs_out_recursion(_Remain, Result, Number, _List) when length(Result) == Number -> 
+combs_out_2(List, Number) -> combs_out_hor(List, [], Number).
+combs_out_hor([], _Result, _Number) -> ok;
+combs_out_hor([RemainH|RemainT], Result, Number) -> 
+    combs_out_hor(RemainT, Result, Number),
+    combs_out_ver(RemainT, [RemainH|Result], Number).
+combs_out_ver(_Remain, Result, Number) when length(Result) == Number -> 
     io:format("~w~n", [Result]);
-combs_out_recursion(Remain, Result, Number, List) ->
-    combs_out_iteration(Remain, Result, Number, List).
+combs_out_ver(Remain, Result, Number) ->
+    combs_out_hor(Remain, Result, Number).
 
 
 permuts_res(List, Number) -> permuts_res(List, [], Number, List).
