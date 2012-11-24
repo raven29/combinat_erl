@@ -1,5 +1,62 @@
 -module(combinat).
--export([permuts_out/2, combs_out/2, permuts_out_2/2, combs_out_2/2, permuts_res/2, combs_res/2, permuts_clb/3, combs_clb/3, permuts_comp/2, combs_comp/2, proc/3]).
+-export([permuts_out/2, combs_out/2, permuts_out_2/2, combs_out_2/2, permuts_res/2, combs_res/2, permuts_clb/3, combs_clb/3, permuts_comp/2, combs_comp/2, proc/3, permuts/2, combs/2, permuts2/2, combs2/2, map_permuts/1, map_combs/1, test/2]).
+
+test(List, Number) ->
+    statistics(runtime),
+    statistics(wall_clock),
+    permuts_res(List, Number),
+    {_X1_res,T1_res} = statistics(runtime),
+    {_X2_res,T2_res} = statistics(wall_clock),
+    io:format("permuts_res: ~w - ~w\n",[T1_res/1000,T2_res/1000]),
+    
+    statistics(runtime),
+    statistics(wall_clock),
+    combs_res(List, Number),
+    {_X3_res,T3_res} = statistics(runtime),
+    {_X4_res,T4_res} = statistics(wall_clock),
+    io:format("combs_res: ~w - ~w\n",[T3_res/1000,T4_res/1000]),
+    
+    statistics(runtime),
+    statistics(wall_clock),
+    proc(permuts_clb, List, Number),
+    {_X1_clb,T1_clb} = statistics(runtime),
+    {_X2_clb,T2_clb} = statistics(wall_clock),
+    io:format("permuts_clb: ~w - ~w\n",[T1_clb/1000,T2_clb/1000]),
+
+    statistics(runtime),
+    statistics(wall_clock),
+    proc(combs_clb, List, Number),
+    {_X3_clb,T3_clb} = statistics(runtime),
+    {_X4_clb,T4_clb} = statistics(wall_clock),
+    io:format("combs_clb: ~w - ~w\n",[T3_clb/1000,T4_clb/1000]),
+
+    statistics(runtime),
+    statistics(wall_clock),
+    permuts(List, Number),
+    {_X1,T1} = statistics(runtime),
+    {_X2,T2} = statistics(wall_clock),
+    io:format("permuts: ~w - ~w\n",[T1/1000,T2/1000]),
+
+    statistics(runtime),
+    statistics(wall_clock),
+    combs(List, Number),
+    {_X3,T3} = statistics(runtime),
+    {_X4,T4} = statistics(wall_clock),
+    io:format("combs: ~w - ~w\n",[T3/1000,T4/1000]),
+
+    statistics(runtime),
+    statistics(wall_clock),
+    permuts2(List, Number),
+    {_X1_2,T1_2} = statistics(runtime),
+    {_X2_2,T2_2} = statistics(wall_clock),
+    io:format("permuts2: ~w - ~w\n",[T1_2/1000,T2_2/1000]),
+
+    statistics(runtime),
+    statistics(wall_clock),
+    combs2(List, Number),
+    {_X3_2,T3_2} = statistics(runtime),
+    {_X4_2,T4_2} = statistics(wall_clock),
+    io:format("combs2: ~w - ~w\n",[T3_2/1000,T4_2/1000]).
 
 
 permuts_out(List, Number) -> permuts_out(List, [], Number, List).
@@ -108,7 +165,7 @@ combs_comp(Remain, [], Number) ->
 combs_comp(Remain, [{HValue,HIndex}|T], Number) ->
     [combs_comp(Remain -- [{R,I}], [{R,I}|[{HValue,HIndex}|T]], Number) || {R,I} <- Remain, I > HIndex].
 
-	
+
 permuts(List, Number) -> 
     {Res, _Rem} = lists:unzip(reduce_permuts(List, Number)),
     Res.
