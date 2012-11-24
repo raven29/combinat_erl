@@ -107,3 +107,35 @@ combs_comp(Remain, [], Number) ->
     [combs_comp(Remain -- [R], [R], Number) || R <- Remain];
 combs_comp(Remain, [{HValue,HIndex}|T], Number) ->
     [combs_comp(Remain -- [{R,I}], [{R,I}|[{HValue,HIndex}|T]], Number) || {R,I} <- Remain, I > HIndex].
+
+	
+permuts(List, Number) -> 
+    {Res, _Rem} = lists:unzip(reduce_permuts(List, Number)),
+    Res.
+reduce_permuts(List, 0) -> [{[], List}];
+reduce_permuts(List, Number) ->
+    lists:foldr(fun(X, Acc)->map_permuts(X)++Acc end, [], reduce_permuts(List,  Number - 1)).
+map_permuts({Res, Rem}) ->
+    [{[X|Res], Rem--[X]}||X<-Rem].
+
+combs(List, Number) -> 
+    {Res, _Rem} = lists:unzip(reduce_combs(List, Number)),
+    Res.
+reduce_combs(List, 0) -> [{[], List}];
+reduce_combs(List, Number) ->
+    lists:foldr(fun(X, Acc)->map_combs(X)++Acc end, [], reduce_combs(List,  Number - 1)).
+map_combs({_Res, []}) -> [];
+map_combs({Res, [HRem|TRem]}) ->
+    [{[HRem|Res], TRem}|map_combs({Res, TRem})].
+
+
+permuts2(List, Number) -> 
+    {Res, _Rem} = lists:unzip(each_level(fun map_permuts/1, List, Number)),
+    Res.
+combs2(List, Number) -> 
+    {Res, _Rem} = lists:unzip(each_level(fun map_combs/1, List, Number)),
+    Res.
+each_level(Fun, List, Number) ->
+    lists:foldl(fun(_X, Acc1)->lists:foldr(fun(X, Acc2)->Fun(X)++Acc2 end, [], Acc1)  end, 
+        [{[], List}], 
+        lists:seq(1, Number)).
